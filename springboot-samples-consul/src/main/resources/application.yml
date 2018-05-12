@@ -1,0 +1,12 @@
+spring:
+  cloud:
+    consul:
+      host: localhost
+      port: 8500
+      discovery:
+        healthCheckInterval: 15s
+        instance-id: ${spring.application.name}
+  application:
+    name: springboot-samples-consul
+server:
+  port: 8080
