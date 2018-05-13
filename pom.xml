@@ -25,6 +25,7 @@
 	<modules>
 		<module>springboot-samples-consul</module>
 		<module>springboot-samples-common</module>
+		<module>springboot-samples-activemq</module>
 	</modules>
 
 
@@ -47,6 +48,12 @@
 				<artifactId>spring-boot-starter-web</artifactId>
 				<version>1.5.4.RELEASE</version>
 			</dependency>
+			<dependency>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-starter-activemq</artifactId>
+				<version>1.5.4.RELEASE</version>
+			</dependency>
+
 		</dependencies>
 	</dependencyManagement>
 </project>
