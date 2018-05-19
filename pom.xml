@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>1.5.4.RELEASE</version>
+		<version>1.5.12.RELEASE</version>
 	</parent>
 
 	<groupId>com.net</groupId>
@@ -34,7 +34,7 @@
 			<dependency>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-starter-actuator</artifactId>
-				<version>1.5.4.RELEASE</version>
+				<version>1.5.12.RELEASE</version>
 			</dependency>
 			<dependency>
 				<groupId>org.springframework.cloud</groupId>
@@ -46,12 +46,12 @@
 			<dependency>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-starter-web</artifactId>
-				<version>1.5.4.RELEASE</version>
+				<version>1.5.12.RELEASE</version>
 			</dependency>
 			<dependency>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-starter-activemq</artifactId>
-				<version>1.5.4.RELEASE</version>
+				<version>1.5.12.RELEASE</version>
 			</dependency>
 
 		</dependencies>

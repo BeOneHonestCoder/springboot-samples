@@ -18,7 +18,7 @@ public class SendMessageController {
 
 	@RequestMapping("/sendMessage")
 	public String sendMessage() throws Exception {
-		messageSender.send(sampleQueue.getQueueName(), "Hello");
+		messageSender.send("sample.queue", "Hello");
 
 		return "Hello";
 	}
