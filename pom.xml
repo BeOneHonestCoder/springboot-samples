@@ -26,6 +26,7 @@
         <module>springboot-samples-consul</module>
         <module>springboot-samples-common</module>
         <module>springboot-samples-activemq</module>
+        <module>springboot-samples-swagger</module>
     </modules>
 
 
