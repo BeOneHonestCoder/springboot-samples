@@ -1,0 +1,14 @@
+spring:
+  profiles:
+    active: dev,local
+    include:
+      - mybatis
+
+
+---
+spring:
+  profiles: dev
+
+---
+spring:
+  profiles: prod
