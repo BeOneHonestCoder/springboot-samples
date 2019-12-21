@@ -1,6 +1,7 @@
 package org.springboot.samples.activemq.jms;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jms.annotation.JmsListener;
 import org.springframework.jms.support.converter.MappingJackson2MessageConverter;
@@ -12,7 +13,7 @@ import javax.jms.Message;
 @Service
 public class MessageListener {
 
-	private Logger LOG = Logger.getLogger(getClass());
+	private Logger LOG = LoggerFactory.getLogger(MessageListener.class);
 
 	@Autowired
 	private MappingJackson2MessageConverter converter;
@@ -20,7 +21,7 @@ public class MessageListener {
 	@JmsListener(destination = "sample.queue")
 	public void onMessage(Message message) throws JMSException {
 		converter.fromMessage(message);
-		LOG.info(message);
+		LOG.info("" + message);
 	}
 
 }

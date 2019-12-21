@@ -1,13 +1,13 @@
 package org.springboot.samples.consul;
 
-import org.springboot.samples.common.SamplesApplication;
-import org.springboot.samples.common.SamplesApplicationRunner;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-@SamplesApplication
+@SpringBootApplication
 public class ConsulApplication {
 
 	public static void main(String[] args) {
-		SamplesApplicationRunner.run(ConsulApplication.class, args);
+		SpringApplication.run(ConsulApplication.class, args);
 	}
 
 }

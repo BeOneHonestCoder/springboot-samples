@@ -1,8 +1,6 @@
 spring:
-  profiles:
-    active: dev,local
-    include:
-      - tracing
+  zipkin:
+    baseUrl: http://localhost:9411
 
 
 ---

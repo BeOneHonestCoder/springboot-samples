@@ -12,6 +12,11 @@
     <artifactId>springboot-samples-gateway</artifactId>
     <dependencies>
         <dependency>
+            <groupId>com.net</groupId>
+            <artifactId>springboot-samples-common</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-webflux</artifactId>
         </dependency>

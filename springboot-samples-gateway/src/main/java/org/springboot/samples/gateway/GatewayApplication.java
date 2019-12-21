@@ -1,15 +1,15 @@
 package org.springboot.samples.gateway;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springboot.samples.common.SamplesApplication;
+import org.springboot.samples.common.SamplesApplicationRunner;
 import org.springframework.web.reactive.config.EnableWebFlux;
 
-@SpringBootApplication
+@SamplesApplication
 @EnableWebFlux
 public class GatewayApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(GatewayApplication.class, args);
+		SamplesApplicationRunner.run(GatewayApplication.class, args);
 	}
 
 }
