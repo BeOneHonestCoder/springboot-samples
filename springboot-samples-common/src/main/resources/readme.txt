@@ -8,3 +8,9 @@ https://github.com/openzipkin/sleuth-webmvc-example
 
 3. Sleuth
 https://github.com/spring-cloud/spring-cloud-sleuth
+
+4. Kafka
+http://kafka.apache.org/quickstart
+
+5. Zookeeper
+http://zookeeper.apache.org/doc/current/zookeeperStarted.html

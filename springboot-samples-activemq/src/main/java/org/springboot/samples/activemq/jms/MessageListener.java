@@ -18,10 +18,10 @@ public class MessageListener {
 	@Autowired
 	private MappingJackson2MessageConverter converter;
 
-	@JmsListener(destination = "sample.queue")
+	@JmsListener(destination = "jms.test.queue")
 	public void onMessage(Message message) throws JMSException {
-		converter.fromMessage(message);
-		LOG.info("" + message);
+		String text = (String) converter.fromMessage(message);
+		LOG.info("" + text);
 	}
 
 }
