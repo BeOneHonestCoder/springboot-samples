@@ -1,11 +1,17 @@
 spring:
   cloud:
     consul:
+      enabled: false
       host: localhost
       port: 8500
       discovery:
+        scheme: http
         healthCheckInterval: 15s
         instance-id: ${spring.application.name}:${spring.cloud.client.hostname}
+        heartbeat:
+          enabled: true
+        tags:
+          environment=dev, user=dev
   application:
     name: springboot-samples-consul
 server:
