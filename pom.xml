@@ -20,6 +20,7 @@
         <module>springboot-samples-activemq</module>
         <module>springboot-samples-swagger</module>
         <module>springboot-samples-gateway</module>
+        <module>springboot-samples-es</module>
     </modules>
 
     <dependencyManagement>
