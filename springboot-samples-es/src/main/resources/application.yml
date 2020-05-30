@@ -3,3 +3,8 @@ spring:
     name: springboot-samples-es
 server:
   port: 8082
+elastic-search:
+  host: localhost
+  port: 9200
+  protocol: http
+elastic-search-index: test
