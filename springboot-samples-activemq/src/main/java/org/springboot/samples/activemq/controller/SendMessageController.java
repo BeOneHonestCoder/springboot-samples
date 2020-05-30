@@ -16,10 +16,15 @@ public class SendMessageController implements ApplicationEventPublisherAware {
 
 	private ApplicationEventPublisher eventPublisher;
 
+	@RequestMapping("/stopApplication")
+	public String stopApplication() throws Exception {
+		eventPublisher.publishEvent(new ApplicationClosedEvent("CLOSE"));
+		return "Stop";
+	}
+
 	@RequestMapping("/sendMessage")
 	public String sendMessage() throws Exception {
 		messageSender.send("jms.test.queue", "Hello");
-		eventPublisher.publishEvent(new ApplicationClosedEvent("CLOSE"));
 		return "Hello";
 	}
 

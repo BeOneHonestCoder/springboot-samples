@@ -1,4 +1,4 @@
-package org.springboot.samples.es.Repository;
+package org.springboot.samples.es.repository;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.elasticsearch.action.index.IndexRequest;
