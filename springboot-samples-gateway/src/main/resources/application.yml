@@ -4,6 +4,8 @@ spring:
     include:
       - tracing
 
+server:
+  port: 8084
 
 ---
 spring:

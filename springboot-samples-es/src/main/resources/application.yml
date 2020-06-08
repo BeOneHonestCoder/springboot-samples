@@ -2,7 +2,7 @@ spring:
   application:
     name: springboot-samples-es
 server:
-  port: 8082
+  port: 8083
 elastic-search:
   host: localhost
   port: 9200

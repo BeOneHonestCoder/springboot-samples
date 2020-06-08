@@ -21,6 +21,7 @@
         <module>springboot-samples-swagger</module>
         <module>springboot-samples-gateway</module>
         <module>springboot-samples-es</module>
+        <module>springboot-samples-zipkin</module>
     </modules>
 
     <dependencyManagement>
@@ -51,13 +52,6 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
-
-    <dependencies>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter</artifactId>
-        </dependency>
-    </dependencies>
 
     <build>
         <pluginManagement>

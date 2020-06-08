@@ -1,0 +1,7 @@
+spring:
+  application:
+    name: springboot-samples-zipkin
+server:
+  port: 8086
+  compression:
+    enabled: false
