@@ -5,3 +5,12 @@ server:
   port: 8086
   compression:
     enabled: false
+zipkin:
+  storage:
+    elasticsearch:
+      hosts: localhost:9200
+      index: zipkin-test
+#  collector:
+#    kafka:
+#      bootstrapServers: localhost:9092
+#      topic: zipkin-test
