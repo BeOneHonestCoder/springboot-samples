@@ -3,10 +3,9 @@ spring:
     name: springboot-samples-zipkin
 server:
   port: 8086
-  compression:
-    enabled: false
 zipkin:
   storage:
+    type: elasticsearch
     elasticsearch:
       hosts: localhost:9200
       index: zipkin-test
