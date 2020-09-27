@@ -7,4 +7,4 @@ elastic-search:
   host: localhost
   port: 9200
   protocol: http
-elastic-search-index: test
+elastic-search-index: es-test
