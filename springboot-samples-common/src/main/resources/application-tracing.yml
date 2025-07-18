@@ -7,9 +7,7 @@ spring:
 
 
 ---
-spring:
-  profiles: dev
+spring.config.activate.on-profile: dev
 
 ---
-spring:
-  profiles: prod
+spring.config.activate.on-profile: prod

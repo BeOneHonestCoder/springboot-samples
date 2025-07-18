@@ -19,7 +19,8 @@ public class GatewayController {
 	@GetMapping("/search")
 	@Retryable(value = {ArithmeticException.class}, maxAttempts = 3, backoff = @Backoff(delay = 1000))
 	public Mono<String> sendMessage() throws Exception {
-		LOG.info("Hi");
+		LOG.info("hello");
+		int i = 1/0;
 		return Mono.just("hello");
 	}
 
