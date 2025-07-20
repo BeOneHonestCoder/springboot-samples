@@ -2,13 +2,18 @@ package org.springboot.samples.gateway.controller;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.MediaType;
+import org.springframework.http.codec.ServerSentEvent;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Recover;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+
+import java.time.Duration;
 
 @RestController
 @RequestMapping("/demo")
@@ -36,6 +41,16 @@ public class GatewayController {
 		return Mono.just("hello");
 	}
 
+
+	@GetMapping(path = "/stream", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+	public Flux<ServerSentEvent<String>> streamEvents() {
+		return Flux.interval(Duration.ofSeconds(1))
+				.take(5)
+				.map(seq -> ServerSentEvent.builder("Event " + seq).build())
+				.concatWith(Flux.just(
+						ServerSentEvent.builder("[END]").build()
+				));
+	}
 
 
 }
