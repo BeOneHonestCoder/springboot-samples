@@ -21,6 +21,7 @@
         <module>springboot-samples-gateway</module>
         <module>springboot-samples-es</module>
         <module>springboot-samples-ws</module>
+        <module>springboot-samples-resilience4j</module>
     </modules>
 
     <dependencyManagement>

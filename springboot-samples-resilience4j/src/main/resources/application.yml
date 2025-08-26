@@ -1,0 +1,32 @@
+spring:
+  application:
+    name: springboot-samples-resilience4j
+server:
+  port: 8086
+
+resilience4j.circuitbreaker:
+  instances:
+    apiCircuitBreaker:
+      failureRateThreshold: 50
+      slidingWindowSize: 10
+      waitDurationInOpenState: 10s
+      permittedNumberOfCallsInHalfOpenState: 2
+      automaticTransitionFromOpenToHalfOpenEnabled: true
+resilience4j.ratelimiter:
+  instances:
+    apiRateLimiter:
+      limitForPeriod: 3
+      limitRefreshPeriod: 10s
+      timeoutDuration: 0s
+
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,circuitbreakers,ratelimiters
+  endpoint:
+    circuitbreakers:
+      enabled: true
+    ratelimiters:
+      enabled: true
