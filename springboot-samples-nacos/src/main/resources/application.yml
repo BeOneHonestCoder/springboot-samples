@@ -1,0 +1,19 @@
+spring:
+  application:
+    name: springboot-samples-nacos
+  config:
+    import:
+      - nacos:${spring.application.name}.yaml?group=DEFAULT_GROUP
+  nacos:
+    config:
+      server-addr: localhost:8848
+server:
+  port: 8087
+
+
+logging:
+  level:
+    com:
+      alibaba:
+        cloud:
+          nacos: DEBUG

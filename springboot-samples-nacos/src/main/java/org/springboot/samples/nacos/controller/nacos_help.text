@@ -1,0 +1,8 @@
+Nacos help document
+https://nacos.io/docs/latest/quickstart/quick-start/
+
+#Startup Nacos
+D:\Softword\nacos-server-3.0.3\nacos\bin>startup.cmd -m standalone
+
+#Startup Local
+-Dnacos.logging.default.config.enabled=false -Dlogback.debug=true
