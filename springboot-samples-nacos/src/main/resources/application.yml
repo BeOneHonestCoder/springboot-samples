@@ -7,6 +7,24 @@ spring:
   nacos:
     config:
       server-addr: localhost:8848
+  cloud:
+    openfeign:
+      oauth2:
+        enabled: true
+        client-registration-id: auth0-api-client
+  security:
+    oauth2:
+      client:
+        registration:
+          auth0-api-client:
+            client-id: arzDllTmFdkfwGNZDHdyuO7fqNemcwPN
+            client-secret: 1gHWcLIckVZgfnFYnLxI8-yRL38zZnvr1kQ6NA1S4XpFxoRRW2sN7GcfwIt-e4HL
+            provider: auth0-provider
+            authorization-grant-type: client_credentials
+        provider:
+          auth0-provider:
+            token-uri: https://dev-k7po2y1iil02858n.us.auth0.com/oauth/token
+
 server:
   port: 8087
 
@@ -17,3 +35,11 @@ logging:
       alibaba:
         cloud:
           nacos: DEBUG
+        nacos:
+          client: DEBUG
+    org:
+      springframework:
+        cloud:
+          openfeign: DEBUG
+
+
