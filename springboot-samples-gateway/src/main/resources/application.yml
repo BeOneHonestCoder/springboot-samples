@@ -1,11 +1,48 @@
 spring:
+  application:
+    name: springboot-samples-gateway
   profiles:
     active: dev,local
     include:
       - tracing
+  cloud:
+    gateway:
+      server:
+        webflux:
+          httpclient:
+            connect-timeout: 30000
+            response-timeout: 120s
+            pool:
+              max-idle-time: 10s
+          globalcors:
+            corsConfigurations:
+              '[/**]':
+                allowed-origins: "http://localhost:*"
+                allowed-methods: "*"
+                allowed-headers: "*"
+                allow-credentials: true
+          routes:
+            - id: springboot-samples-resilience4j
+              uri: http://localhost:8086
+              predicates:
+                - Path=/springboot-samples-resilience4j/**,
+              filters:
+                - RewritePath=/(?<prefix>springboot-samples-resilience4j)/(?<segment>.*), /$\{segment}
+          default-filters:
+            - DedupeResponseHeader=Access-Control-Allow-Origin, RETAIN_FIRST
+
 
 server:
-  port: 8084
+  port: 8080
+
+logging:
+  level:
+    org.springframework.cloud.gateway: DEBUG
+    org.springframework.web.reactive: DEBUG
+    reactor.netty.http.client: DEBUG
+    reactor.netty.http.server: DEBUG
+  pattern:
+    console: "%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
 
 ---
 spring.config.activate.on-profile: local
