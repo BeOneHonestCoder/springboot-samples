@@ -1,0 +1,47 @@
+spring:
+  application:
+    name: springboot-samples-ff4j
+  profiles:
+    active: dev,local
+    include:
+      - tracing
+  datasource:
+    url: jdbc:mysql://localhost:3306/test?serverTimezone=UTC
+    username: root
+    password: 123456
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+    out-of-order: true
+    locations: classpath:db/migration
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+server:
+  port: 8088
+  
+ff4j:
+  api:
+    context-path: /api/ff4j
+    spring-doc:
+      enabled: true
+  audit:
+    enabled: true
+  web-console:
+    enabled: true
+    context-path: /ff4j-web-console
+
+---
+spring.config.activate.on-profile: local
+
+---
+spring.config.activate.on-profile: dev
+
+---
+spring.config.activate.on-profile: prod

@@ -5,6 +5,8 @@ spring:
     active: dev,local
     include:
       - tracing
+  reactor:
+    context-propagation: auto
   cloud:
     gateway:
       server:
@@ -41,8 +43,6 @@ logging:
     org.springframework.web.reactive: DEBUG
     reactor.netty.http.client: DEBUG
     reactor.netty.http.server: DEBUG
-  pattern:
-    console: "%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
 
 ---
 spring.config.activate.on-profile: local

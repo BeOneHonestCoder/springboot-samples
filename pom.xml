@@ -23,6 +23,7 @@
         <module>springboot-samples-ws</module>
         <module>springboot-samples-resilience4j</module>
         <module>springboot-samples-nacos</module>
+        <module>springboot-samples-ff4j</module>
     </modules>
 
     <dependencyManagement>
