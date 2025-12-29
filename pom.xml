@@ -24,6 +24,7 @@
         <module>springboot-samples-resilience4j</module>
         <module>springboot-samples-nacos</module>
         <module>springboot-samples-ff4j</module>
+        <module>springboot-samples-wiremock</module>
     </modules>
 
     <dependencyManagement>

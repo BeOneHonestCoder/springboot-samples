@@ -1,0 +1,19 @@
+{
+  "request": {
+    "method": "GET",
+    "urlPath": "/api/test/mock-data",
+    "queryParameters": {
+      "status": {
+        "equalTo": "active"
+      }
+    }
+  },
+  "response": {
+    "status": 200,
+    "body": "{\"message\": \"这是来自本地资源的测试数据\", \"timestamp\": \"2025-01-01\", \"debug_info\": \"static-file-loader\"}",
+    "headers": {
+      "Content-Type": "application/json",
+      "X-Mock-Source": "Classpath"
+    }
+  }
+}
