@@ -7,7 +7,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface WireMockCacheRepository extends JpaRepository<WireMockCacheEntity, Long> {
 
-    boolean existsByRequestUrl(String requestUrl);
-
-    WireMockCacheEntity findByRequestUrl(String requestUrl);
+    WireMockCacheEntity findByRequestUrlAndRequestMethod(String requestUrl, String requestMethod);
 }

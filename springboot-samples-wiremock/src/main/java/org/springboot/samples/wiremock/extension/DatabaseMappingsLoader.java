@@ -19,11 +19,6 @@ public class DatabaseMappingsLoader implements MappingsLoaderExtension {
     private final WiremockStubRepository repository;
 
     @Override
-    public String getName() {
-        return "database-mappings-loader";
-    }
-
-    @Override
     public void loadMappingsInto(StubMappings stubMappings) {
         repository.findByIsEnabledTrue().forEach(stub -> {
             StubMapping mapping = StubMapping.buildFrom(stub.getStubJson());
@@ -34,5 +29,10 @@ public class DatabaseMappingsLoader implements MappingsLoaderExtension {
                     .build());
             stubMappings.addMapping(mapping);
         });
+    }
+
+    @Override
+    public String getName() {
+        return "database-mappings-loader";
     }
 }
