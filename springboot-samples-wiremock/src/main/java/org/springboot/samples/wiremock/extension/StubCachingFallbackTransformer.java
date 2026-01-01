@@ -32,10 +32,12 @@ public class StubCachingFallbackTransformer implements ResponseTransformerV2 {
         String method = request.getMethod().getName();
 
         if (HttpStatus.valueOf(response.getStatus()).is2xxSuccessful()) {
+            log.info("Proxy request successful for [{} {}]. Triggering async cache update.", method, url);
             asyncSave(url, method, response);
             return response;
         }
 
+        log.warn("Proxy request failed with status [{}] for [{} {}]. Searching for cached fallback.", response.getStatus(), method, url);
         WireMockCacheEntity cachedData = cacheRepository.findByRequestUrlAndRequestMethod(url, method);
         if (cachedData != null) {
             return buildCachedResponse(response, cachedData);

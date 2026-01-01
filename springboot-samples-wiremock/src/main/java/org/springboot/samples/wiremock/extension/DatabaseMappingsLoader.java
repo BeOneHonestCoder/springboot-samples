@@ -28,6 +28,7 @@ public class DatabaseMappingsLoader implements MappingsLoaderExtension {
                     .attr("source", "database")
                     .build());
             stubMappings.addMapping(mapping);
+            log.info("Loaded stub from DB: [{}] {}", stub.getId(), stub.getName());
         });
     }
 

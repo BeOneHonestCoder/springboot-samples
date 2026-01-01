@@ -7,6 +7,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springboot.samples.wiremock.entity.WireMockStubEntity;
 import org.springboot.samples.wiremock.repository.WiremockStubRepository;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
+
+import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
@@ -31,16 +34,38 @@ public class StubToDatabaseSyncListener implements StubLifecycleListener {
     }
 
     private void saveOrUpdateDb(StubMapping stub) {
-        WireMockStubEntity entity = stubRepository.findById(stub.getId().toString())
-                .orElse(new WireMockStubEntity());
+        String currentId = stub.getId().toString();
+        if (!stub.isDirty()) {
+            log.info("Stub [{}] is not dirty (possibly loaded from persistent storage). Skipping DB sync.", currentId);
+            return;
+        }
 
+        Optional<WireMockStubEntity> existing = stubRepository.findById(currentId);
+
+        if (existing.isPresent()) {
+            log.info("Stub [{}] marked as dirty but content is identical to DB. Skipping update.", currentId);
+            return;
+        }
+
+        WireMockStubEntity entity = existing.orElse(new WireMockStubEntity());
+        String name = Optional.ofNullable(stub.getName())
+                .filter(StringUtils::hasText)
+                .orElseGet(() -> {
+                    var request = stub.getRequest();
+                    String path = Optional.ofNullable(request.getUrl())
+                            .filter(StringUtils::hasText)
+                            .orElseGet(() -> Optional.ofNullable(request.getUrlPath())
+                                    .filter(StringUtils::hasText)
+                                    .orElse("unspecified-path"));
+                    return "Stub-" + request.getMethod() + " " + path;
+                });
         entity.setId(stub.getId().toString());
-        entity.setName(stub.getName());
+        entity.setName(name);
         entity.setStubJson(stub.toString());
         entity.setIsEnabled(true);
 
         stubRepository.save(entity);
-        log.info("Synced stub change to DB: {}", stub.getName());
+        log.info("Successfully synced changed stub [{}] to database.", currentId);
     }
 
     @Override
