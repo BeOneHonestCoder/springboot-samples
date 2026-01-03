@@ -27,6 +27,16 @@
 			<artifactId>spring-boot-autoconfigure</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>com.google.protobuf</groupId>
+			<artifactId>protobuf-java</artifactId>
+			<version>4.28.3</version>
+		</dependency>
+		<dependency>
+			<groupId>com.google.protobuf</groupId>
+			<artifactId>protobuf-java-util</artifactId>
+			<version>4.28.3</version>
+		</dependency>
+		<dependency>
 			<groupId>io.micrometer</groupId>
 			<artifactId>micrometer-tracing-bridge-otel</artifactId>
 		</dependency>
@@ -37,6 +47,10 @@
 		<dependency>
 			<groupId>io.micrometer</groupId>
 			<artifactId>micrometer-registry-prometheus</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>io.micrometer</groupId>
+			<artifactId>micrometer-registry-otlp</artifactId>
 		</dependency>
 	</dependencies>
 

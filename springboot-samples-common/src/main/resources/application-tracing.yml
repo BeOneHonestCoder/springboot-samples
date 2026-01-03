@@ -14,6 +14,12 @@ management:
       export:
         otlp:
           endpoint: http://127.0.0.1:4318/v1/traces
+  otlp:
+    metrics:
+      export:
+        enabled: true
+        url: http://127.0.0.1:4318/v1/metrics
+        step: 5s
 
 logging:
   pattern:
