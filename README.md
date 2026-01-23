@@ -14,3 +14,4 @@
 #### https://resilience4j.readme.io/docs/ratelimiter
 #### https://nacos.io/docs/latest/overview/
 #### https://docs.spring.io/spring-cloud-openfeign/reference/spring-cloud-openfeign.html
+#### https://github.com/codecentric/spring-boot-admin
