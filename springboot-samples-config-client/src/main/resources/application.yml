@@ -1,0 +1,9 @@
+spring:
+  application:
+    name: springboot-samples-config-client
+  profiles:
+    active: dev
+  config:
+    import: "optional:configserver:http://localhost:8092"
+server:
+  port: 8093

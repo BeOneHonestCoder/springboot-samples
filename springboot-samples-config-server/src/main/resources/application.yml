@@ -1,0 +1,33 @@
+spring:
+  application:
+    name: springboot-samples-config-server
+  profiles:
+    active: native
+server:
+  port: 8092
+
+
+---
+spring:
+  config:
+    activate:
+      on-profile: native
+  cloud:
+    config:
+      server:
+        native:
+          search-locations: file:../springboot-samples-config-resources/
+
+---
+spring:
+  config:
+    activate:
+      on-profile: git
+  cloud:
+    config:
+      server:
+        git:
+          uri: https://github.com/BeOneHonestCoder/springboot-samples.git
+          search-paths: springboot-samples-config-resources
+          default-label: master
+          force-pull: true

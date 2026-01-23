@@ -1,0 +1,6 @@
+app:
+  env-name: "Development Lab"
+
+feature:
+  dark-mode: true
+  beta-access: true

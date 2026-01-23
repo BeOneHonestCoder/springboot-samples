@@ -1,0 +1,7 @@
+app:
+  env-name: "Base Environment"
+  description: "This is the default description."
+
+feature:
+  dark-mode: false
+  beta-access: false

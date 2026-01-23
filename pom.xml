@@ -27,6 +27,8 @@
         <module>springboot-samples-wiremock</module>
         <module>springboot-samples-admin-server</module>
         <module>springboot-samples-admin-client</module>
+        <module>springboot-samples-config-server</module>
+        <module>springboot-samples-config-client</module>
     </modules>
 
     <dependencyManagement>
