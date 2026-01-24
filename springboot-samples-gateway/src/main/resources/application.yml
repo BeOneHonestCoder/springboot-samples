@@ -19,17 +19,23 @@ spring:
           globalcors:
             corsConfigurations:
               '[/**]':
-                allowed-origins: "http://localhost:*"
+                allowed-origin-patterns: "*"
                 allowed-methods: "*"
                 allowed-headers: "*"
                 allow-credentials: true
           routes:
-            - id: springboot-samples-resilience4j
-              uri: http://localhost:8086
+            - id: springboot-samples-admin-client
+              uri: http://localhost:8091
               predicates:
-                - Path=/springboot-samples-resilience4j/**,
+                - Path=/springboot-samples-admin-client/**,
               filters:
-                - RewritePath=/(?<prefix>springboot-samples-resilience4j)/(?<segment>.*), /$\{segment}
+                - RewritePath=/(?<prefix>springboot-samples-admin-client)/(?<segment>.*), /$\{segment}
+            - id: springboot-samples-config-client
+              uri: http://localhost:8093
+              predicates:
+                - Path=/springboot-samples-config-client/**,
+              filters:
+                - RewritePath=/(?<prefix>springboot-samples-config-client)/(?<segment>.*), /$\{segment}
           default-filters:
             - DedupeResponseHeader=Access-Control-Allow-Origin, RETAIN_FIRST
 
@@ -43,6 +49,18 @@ logging:
     org.springframework.web.reactive: DEBUG
     reactor.netty.http.client: DEBUG
     reactor.netty.http.server: DEBUG
+
+springdoc:
+  swagger-ui:
+    enabled: true
+    displayOperationId: true
+    urls:
+      - name: springboot-samples-admin-client
+        url: /springboot-samples-admin-client/v3/api-docs
+      - name: springboot-samples-config-client
+        url: /springboot-samples-config-client/v3/api-docs
+  api-docs:
+    enabled: true
 
 ---
 spring.config.activate.on-profile: local
