@@ -15,3 +15,4 @@
 #### https://nacos.io/docs/latest/overview/
 #### https://docs.spring.io/spring-cloud-openfeign/reference/spring-cloud-openfeign.html
 #### https://github.com/codecentric/spring-boot-admin
+#### https://docs.spring.io/spring-cloud-config/reference/server/environment-repository.html
