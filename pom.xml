@@ -29,6 +29,7 @@
         <module>springboot-samples-admin-client</module>
         <module>springboot-samples-config-server</module>
         <module>springboot-samples-config-client</module>
+        <module>springboot-samples-authorization-server</module>
     </modules>
 
     <dependencyManagement>
