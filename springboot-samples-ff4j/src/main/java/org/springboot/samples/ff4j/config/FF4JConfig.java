@@ -1,15 +1,19 @@
 package org.springboot.samples.ff4j.config;
 
-import org.ff4j.FF4j;
+import  org.ff4j.FF4j;
 import org.ff4j.audit.repository.JdbcEventRepository;
 import org.ff4j.property.store.JdbcPropertyStore;
 import org.ff4j.security.SpringSecurityAuthorisationManager;
 import org.ff4j.store.JdbcFeatureStore;
+import org.ff4j.web.controller.AbstractController;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import javax.sql.DataSource;
 
+/**
+ * \ff4j-web\2.0.0\ff4j-web-2.0.0.jar!\org\ff4j\web\controller\AbstractController.class
+ */
 @Configuration
 public class FF4JConfig {
 
@@ -22,6 +26,8 @@ public class FF4JConfig {
         ff4j.setAuthorizationsManager(new SpringSecurityAuthorisationManager());
         ff4j.audit(true);
         ff4j.autoCreate(true);
+        // The ultimate native solution: Tell the FF4J console that ONLY ROLE_ADMIN is an administrator!
+        AbstractController.ADMIN_GROUPS.add("ROLE_ADMIN");
         return ff4j;
     }
 }
