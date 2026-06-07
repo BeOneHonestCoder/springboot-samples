@@ -1,0 +1,11 @@
+global:
+  scrape_interval: 5s # 每 5 秒刮一次，演示用，生产环境通常 15s-1m
+
+scrape_configs:
+  - job_name: 'otel-collector'
+    static_configs:
+      - targets: ['otel-collector:8889'] # ✅ 对应上面 Collector 开的 8889 端口
+  
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']

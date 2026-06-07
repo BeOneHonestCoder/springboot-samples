@@ -1,0 +1,55 @@
+receivers:
+  otlp:
+    protocols:
+      grpc:
+        endpoint: "0.0.0.0:4317" # 接收 Java Agent 或 gRPC 客户端数据
+      http:
+        endpoint: "0.0.0.0:4318" # 接收 Spring Boot (HTTP) 发来的数据
+
+processors:
+  batch:
+    timeout: 1s # 积累 1 秒的数据后批量发送，提高传输效率
+
+exporters:
+  # 1. 发送给 Prometheus (指标)
+  # OTel 会在这里开启一个 HTTP 服务，Prometheus 容器会来 8889 端口拉取数据
+  prometheus:
+    endpoint: "0.0.0.0:8889"
+
+  # 2. 发送给 Jaeger (链路)
+  otlp/jaeger:
+    endpoint: "jaeger:4317" 
+    tls:
+      insecure: true
+
+  # 3. 发送给 Zipkin (链路) - 新增
+  # 注意：这里使用 Zipkin 容器名和标准 API V2 端口
+  zipkin:
+    endpoint: "http://zipkin:9411/api/v2/spans"
+    format: proto # 推荐使用 proto 格式提高性能
+
+  # 4. 调试日志
+  # 在 Docker 日志中能直接看到接收到的 Span 信息
+  debug:
+    verbosity: detailed
+
+service:
+  pipelines:
+    # 链路追踪流水线
+    traces:
+      receivers: [otlp]
+      processors: [batch]
+      # 如果你只想发给 Zipkin，就把 otlp/jaeger 删掉
+      # 目前配置是同时发给 Jaeger、Zipkin 和 控制台日志
+      exporters: [otlp/jaeger, zipkin, debug] 
+
+    # 业务指标流水线
+    metrics:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [prometheus, debug]
+
+  # 开启 Collector 自有的健康检查和监控（可选）
+  telemetry:
+    logs:
+      level: "info"

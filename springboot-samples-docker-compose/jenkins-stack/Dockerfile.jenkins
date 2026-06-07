@@ -1,0 +1,19 @@
+FROM jenkins/jenkins:lts
+
+USER root
+
+# 1. 安装 Docker CLI (为了能打包镜像)
+RUN apt-get update && \
+    apt-get install -y docker.io && \
+    rm -rf /var/lib/apt/lists/*
+
+# 2. 安装 oc (OpenShift CLI)
+# 下载 Linux 版的 oc 客户端并解压到 /usr/local/bin
+RUN curl -L https://mirror.openshift.com/pub/openshift-v4/clients/ocp/latest/openshift-client-linux.tar.gz | tar -xz -C /usr/local/bin oc
+
+# 3. 安装 helm (Kubernetes 包管理器)
+RUN curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+
+# 切换回 jenkins 用户 (为了符合安全最佳实践)
+# 注意：因为要访问 docker.sock，在后续步骤可能需要调整权限
+USER jenkins

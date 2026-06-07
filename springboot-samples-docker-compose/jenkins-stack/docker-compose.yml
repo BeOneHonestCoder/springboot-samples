@@ -1,0 +1,21 @@
+version: '3.8'
+
+services:
+  jenkins:
+    build:
+      context: .
+      dockerfile: Dockerfile.jenkins
+    container_name: jenkins-local
+    privileged: true
+    user: root
+    ports:
+      - "9090:8080"    # Jenkins Web 访问端口
+      - "50000:50000"  # Jenkins 节点通讯端口
+    volumes:
+      - jenkins_home:/var/jenkins_home # 将 Jenkins 的数据持久化，哪怕容器删了配置也在
+      # 【核心魔法】把 Windows 宿主机的 Docker 进程映射给 Jenkins 容器
+      - /var/run/docker.sock:/var/run/docker.sock 
+    restart: unless-stopped
+
+volumes:
+  jenkins_home:

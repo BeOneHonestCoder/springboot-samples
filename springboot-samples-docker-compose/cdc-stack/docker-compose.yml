@@ -1,0 +1,70 @@
+version: '3.8'
+
+services:
+  # 1. 源数据库：MySQL (已开启 Binlog)
+  mysql:
+    image: mysql:8.0
+    container_name: cdc-mysql
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=123456
+    command: 
+      - --server-id=1
+      - --log-bin=mysql-bin
+      - --binlog-format=ROW
+      - --binlog-row-image=FULL
+
+  # 2. 消息总线底层依赖：Zookeeper
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.5.0
+    container_name: cdc-zookeeper
+    ports:
+      - "2181:2181"
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+
+  # 3. 消息总线：Kafka
+  kafka:
+    image: confluentinc/cp-kafka:7.5.0
+    container_name: cdc-kafka
+    depends_on:
+      - zookeeper
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+
+  # 4. CDC 抓取器：Debezium
+  debezium:
+    image: quay.io/debezium/connect:2.4
+    container_name: cdc-debezium
+    depends_on:
+      - kafka
+      - mysql
+    ports:
+      - "8083:8083"
+    environment:
+      BOOTSTRAP_SERVERS: kafka:29092
+      GROUP_ID: 1
+      CONFIG_STORAGE_TOPIC: debezium_configs
+      OFFSET_STORAGE_TOPIC: debezium_offsets
+      STATUS_STORAGE_TOPIC: debezium_statuses
+
+  # 5. 可视化控制台：Redpanda Console
+  kafka-console:
+    image: docker.redpanda.com/redpandadata/console:v2.4.3
+    container_name: cdc-kafka-console
+    depends_on:
+      - kafka
+    ports:
+      - "8090:8080" # 将控制台映射到宿主机的 8080 端口
+    environment:
+      # 告诉控制台去哪里连 Kafka (走 Docker 内部网络)
+      KAFKA_BROKERS: kafka:29092

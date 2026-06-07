@@ -1,0 +1,77 @@
+version: '3.8'
+
+services:
+  # === 1. 中转站 OTel Collector ===
+  # 优化点：添加 healthcheck 确保下游 Ready 后再完全工作
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib:0.91.0
+    container_name: otel-collector
+    command: ["--config=/etc/otel-collector-config.yaml"]
+    volumes:
+      - ./otel-collector-config.yaml:/etc/otel-collector-config.yaml
+    ports:
+      - "4317:4317" # gRPC 接收
+      - "4318:4318" # HTTP 接收 (Spring Boot 默认端口)
+      - "8889:8889" # Prometheus Metrics 端口
+    networks:
+      - otel-net
+    depends_on:
+      jaeger:
+        condition: service_started
+      zipkin:
+        condition: service_started
+
+  # === 2. 链路存储 Jaeger ===
+  jaeger:
+    image: jaegertracing/all-in-one:1.53
+    container_name: jaeger
+    environment:
+      - COLLECTOR_OTLP_ENABLED=true 
+    ports:
+      - "16686:16686" # Jaeger UI
+    networks:
+      - otel-net
+
+  # === 3. 链路存储 Zipkin (新增) ===
+  zipkin:
+    image: openzipkin/zipkin:latest
+    container_name: zipkin
+    ports:
+      - "9411:9411" # Zipkin UI 和接收端口
+    networks:
+      - otel-net
+
+  # === 4. 指标存储 Prometheus ===
+  prometheus:
+    image: prom/prometheus:v2.49.1
+    container_name: prometheus
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --storage.tsdb.retention.time=15d # 优化：限制数据保留时间，防止撑爆硬盘
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - "9090:9090"
+    networks:
+      - otel-net
+
+  # === 5. 可视化 Grafana ===
+  grafana:
+    image: grafana/grafana:10.3.1
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_ANALYTICS_REPORTING_ENABLED=false
+    networks:
+      - otel-net
+    depends_on:
+      - prometheus
+      - jaeger
+      - zipkin
+
+networks:
+  otel-net:
+    driver: bridge

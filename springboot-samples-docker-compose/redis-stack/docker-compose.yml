@@ -1,0 +1,29 @@
+services:
+  # Redis 数据库
+  redis:
+    image: redis:latest
+    container_name: redis-server
+    restart: always
+    # 修改点：去掉了 --requirepass 参数，现在是无密码模式
+    # 如果你希望数据更安全（持久化），可以改成: command: redis-server --appendonly yes
+    command: redis-server
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+
+  # RedisInsight 可视化界面
+  redis-insight:
+    image: redis/redisinsight:latest
+    container_name: redis-insight
+    restart: always
+    ports:
+      - "5540:5540"
+    volumes:
+      - insight-data:/db
+    depends_on:
+      - redis
+
+volumes:
+  redis-data:
+  insight-data:

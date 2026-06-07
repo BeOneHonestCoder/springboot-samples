@@ -1,0 +1,159 @@
+services:
+  # ==========================================
+  # [新增] Kerberos KDC 认证服务器 (全自动生成凭据)
+  # ==========================================
+  kdc:
+    image: ubuntu:22.04
+    container_name: kdc
+    hostname: kdc
+    ports:
+      - "88:88"      
+      - "88:88/udp"
+    volumes:
+      # 将生成的凭据直接输出到 certs 目录，Kafka 会读取它
+      - ./certs:/shared
+    networks:
+      - app-tier
+    # 健康检查：只有当 jaas.conf 文件真正生成完毕，才允许启动 Kafka
+    healthcheck:
+      test: ["CMD-SHELL", "test -f /shared/kafka_server_jaas.conf"]
+      interval: 3s
+      timeout: 3s
+      retries: 10
+      start_period: 5s
+    command:
+      - /bin/bash
+      - -c
+      - |
+        # 1. 安装 Kerberos
+        apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y krb5-kdc krb5-admin-server
+        
+        # 2. 生成全局 krb5.conf 导航地图
+        cat <<EOF > /etc/krb5.conf
+        [libdefaults]
+            default_realm = KAFKA.LOCAL
+        [realms]
+            KAFKA.LOCAL = {
+                kdc = kdc
+                admin_server = kdc
+            }
+        EOF
+        
+        # 3. 初始化数据库 (密码随意)
+        kdb5_util create -s -r KAFKA.LOCAL -P admin123
+        
+        # 4. 创建 Principal 并导出门禁卡 (Keytab)
+        kadmin.local -q "addprinc -randkey kafka/localhost@KAFKA.LOCAL"
+        kadmin.local -q "ktadd -k /shared/kafka.server.keytab kafka/localhost@KAFKA.LOCAL"
+        cp /etc/krb5.conf /shared/krb5.conf
+        
+        # 5. 生成 Kafka 服务端的 JAAS 说明书
+        cat <<EOF > /shared/kafka_server_jaas.conf
+        KafkaServer {
+            com.sun.security.auth.module.Krb5LoginModule required
+            useKeyTab=true
+            storeKey=true
+            keyTab="/etc/kafka/secrets/kafka.server.keytab"
+            principal="kafka/localhost@KAFKA.LOCAL";
+        };
+        EOF
+        
+        chmod 444 /shared/kafka.server.keytab /shared/krb5.conf /shared/kafka_server_jaas.conf
+        
+        # 6. 前台启动 KDC
+        krb5kdc -n
+
+  # ==========================================
+  # Kafka 服务
+  # ==========================================
+  kafka:
+    image: confluentinc/cp-kafka:7.5.0
+    container_name: kafka
+    depends_on:
+      # [修改] 强制等待 KDC 容器状态变为 healthy 后再启动
+      kdc:
+        condition: service_healthy
+    ports:
+      - "9092:9092" 
+      - "9093:9093" 
+      - "9094:9094" # [新增] 对外暴露的 SASL_SSL 端口
+    volumes:
+      - ./certs:/etc/kafka/secrets
+    environment:
+      KAFKA_NODE_ID: 1
+      KAFKA_PROCESS_ROLES: 'broker,controller'
+      KAFKA_CONTROLLER_QUORUM_VOTERS: '1@kafka:29093'
+      
+      # [修改] 安全协议映射中增加 SASL_SSL_HOST
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: 'CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT,SSL_HOST:SSL,SASL_SSL_HOST:SASL_SSL'
+      # [修改] 增加 SASL_SSL_HOST 监听 9094 端口
+      KAFKA_LISTENERS: 'PLAINTEXT://kafka:29092,CONTROLLER://kafka:29093,PLAINTEXT_HOST://0.0.0.0:9092,SSL_HOST://0.0.0.0:9093,SASL_SSL_HOST://0.0.0.0:9094'
+      # [修改] 对外广播 SASL_SSL_HOST 地址
+      KAFKA_ADVERTISED_LISTENERS: 'PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092,SSL_HOST://localhost:9093,SASL_SSL_HOST://localhost:9094'
+      
+      KAFKA_CONTROLLER_LISTENER_NAMES: 'CONTROLLER'
+      KAFKA_INTER_BROKER_LISTENER_NAME: 'PLAINTEXT'
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_LOG_DIRS: '/tmp/kraft-combined-logs'
+      CLUSTER_ID: 'MkU3OEVBNTcwNTJENDM2Qk'
+      
+      # --- 原有 SSL 配置保持不变 ---
+      KAFKA_SSL_KEYSTORE_LOCATION: /etc/kafka/secrets/kafka.keystore.p12
+      KAFKA_SSL_KEYSTORE_PASSWORD: changeit
+      KAFKA_SSL_KEYSTORE_TYPE: PKCS12
+      KAFKA_SSL_TRUSTSTORE_LOCATION: /etc/kafka/secrets/kafka.truststore.jks
+      KAFKA_SSL_TRUSTSTORE_PASSWORD: changeit
+      KAFKA_SSL_TRUSTSTORE_TYPE: JKS
+      KAFKA_SSL_CLIENT_AUTH: none 
+      
+      # --- [新增] Kerberos & SASL 核心配置 ---
+      KAFKA_SASL_ENABLED_MECHANISMS: GSSAPI
+      KAFKA_SASL_KERBEROS_SERVICE_NAME: kafka
+      # 读取 kdc 容器动态生成的认证文件
+      KAFKA_OPTS: "-Djava.security.auth.login.config=/etc/kafka/secrets/kafka_server_jaas.conf -Djava.security.krb5.conf=/etc/kafka/secrets/krb5.conf"
+    networks:
+      - app-tier
+
+  # ==========================================
+  # Schema Registry (无改动)
+  # ==========================================
+  schema-registry:
+    image: confluentinc/cp-schema-registry:7.5.0
+    container_name: schema-registry
+    ports:
+      - "8081:8081"
+    environment:
+      SCHEMA_REGISTRY_HOST_NAME: schema-registry
+      SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: 'PLAINTEXT://kafka:29092'
+      SCHEMA_REGISTRY_LISTENERS: http://0.0.0.0:8081
+    depends_on:
+      - kafka
+    networks:
+      - app-tier
+
+  # ==========================================
+  # Redpanda Console (无改动)
+  # ==========================================
+  kafka-console:
+    image: docker.redpanda.com/redpandadata/console:v2.4.3
+    container_name: kafka-console
+    restart: on-failure
+    ports:
+      - "8090:8080"
+    environment:
+      - KAFKA_BROKERS=kafka:29092
+      - KAFKA_SCHEMAREGISTRY_ENABLED=true
+      - KAFKA_SCHEMAREGISTRY_URLS=http://schema-registry:8081
+    depends_on:
+      - kafka
+      - schema-registry
+    networks:
+      - app-tier
+
+networks:
+  app-tier:
+    name: kafka-stack_app-tier
+    external: true
